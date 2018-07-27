@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<launch>
+  <node pkg="kitchen_slam" type="teleop" name="teleop"  output="screen">
+  	<remap from="teleop/cmd_vel" to="/cmd_vel"/>
+  </node>
+</launch>
