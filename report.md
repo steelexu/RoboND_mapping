@@ -22,7 +22,7 @@ There are mainly two approach to SLAM,
 
 ### RTAB
 
-[rtab](https://raw.githubusercontent.com/wiki/introlab/rtabmap/doc/Labbe2015ULavalOverview.jpg)
+![rtab](https://raw.githubusercontent.com/wiki/introlab/rtabmap/doc/Labbe2015ULavalOverview.jpg)
 
 RTAB-Map (Real-Time Appearance-Based Mapping) is a RGB-D, Stereo and Lidar Graph-Based SLAM approach based on an incremental appearance-based loop closure detector. The loop closure detector uses a bag-of-words approach to determinate how likely a new image comes from a previous location or a new location. When a loop closure hypothesis is accepted, a new constraint is added to the map’s graph, then a graph optimizer minimizes the errors in the map. A memory management approach is used to limit the number of locations used for loop closure detection and graph optimization, so that real-time constraints on large-scale environnements are always respected.  
 
@@ -31,11 +31,15 @@ RTAB-Map (Real-Time Appearance-Based Mapping) is a RGB-D, Stereo and Lidar Graph
 
 ## Model Configuration & World Creation
 
-### Aside from the provided  world,  my personal world consist of stairs and table and standing person.  surrounding with wall and window. This world is created in the building editor of gazebor, save as world/house1.world
+### World
+
+Aside from the provided  world,  my personal world consist of stairs and table and standing person.  surrounding with wall and window. This world is created in the building editor of gazebor, save as world/house1.world
 ![house-world][house-world-img]
 
 
-### 2-wheel robot is from previous lesson(udacity_bot) , with a hokuyo scan and replace camera with kinect(RGBD camera),package inherit a lot from  udacity_bot, adopting scripts from Student+Project+Materials.zip, adding some new launch file
+### Robot
+
+2-wheel robot is from previous lesson(udacity_bot) , with a hokuyo scan and replace camera with kinect(RGBD camera),package inherit a lot from  udacity_bot, adopting scripts from Student+Project+Materials.zip, adding some new launch file
 
 slam_rtab.sh  integrating all these launch file, afford to start the mapping environment
 
