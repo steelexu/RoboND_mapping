@@ -1,47 +1,54 @@
-#report.md
 
-#
+# Map My World
 
-Abstract, 
+## Abstract
 
-##   - Student gives a high-level overview of what is being attempted in the report. 
-Abstracts are typically 5-10 sentences that provide just enough context to understand the gist of the report.
+This project complete the mapping task with provided environment and customized world, work including: setup the world, equip the robot, and debugging with ros tool.  Utilizing  with rtab-slam toolchain, environment's 2d   occupancy grid map and 3D point cloud are generated
 
-## Introduction - Student can clearly and accurately explain the problem domain.
+## Introduction 
+
+To fullfill various task, the robot need a map of the unknown environment while simultaneously localizing itself in this map, Learning maps under pose uncertainty is often referred to as the simultaneous localization and mapping (SLAM) problem. Such SLAM process is only based on robot on-board sensors and without relying on external GPS
+
+
 
 ## Background 
-importance of both mapping
-  into the scope  also identifying some of the current challenges in robot mapping
-
-They further discuss and compare mapping algorithms
-*  use landmark
 
 
 
+There are mainly two approach to SLAM,
 
-All of these optimizations use node poses and link transformations as constraints. 
-When a loop closure is detected, errors introduced by the odometry can be propagated to all links, correcting the map.
+* Particle Filter Approach ; FASTSLAM need predefined landmark positions, gmapping adapts FastSLAM into grid map without landmark. Filtering approaches model the problem as an on-line state estimation which is augmented and refined by incorporating the new measurements as they become available.
+* Graph optimization Approach ;Solving a graph-based SLAM problem involves to construct a graph whose nodes represent robot poses or landmarks and in which an edge between two nodes encodes a sensor measurement that constrains the connected poses. Such optimization of constrains is done in the backend (in rtab it's left to vertigo/g2o), and the frontend will deal with input from sensor, one of step in frontend is loop dectection where rtab is good at.
+
+### RTAB
+
+[rtab](https://raw.githubusercontent.com/wiki/introlab/rtabmap/doc/Labbe2015ULavalOverview.jpg)
+
+RTAB-Map (Real-Time Appearance-Based Mapping) is a RGB-D, Stereo and Lidar Graph-Based SLAM approach based on an incremental appearance-based loop closure detector. The loop closure detector uses a bag-of-words approach to determinate how likely a new image comes from a previous location or a new location. When a loop closure hypothesis is accepted, a new constraint is added to the map’s graph, then a graph optimizer minimizes the errors in the map. A memory management approach is used to limit the number of locations used for loop closure detection and graph optimization, so that real-time constraints on large-scale environnements are always respected.  
 
 
-## Model Configuration, World Creation,
+ 
 
+## Model Configuration & World Creation
+
+### Aside from the provided  world,  my personal world consist of stairs and table and standing person.  surrounding with wall and window. This world is created in the building editor of gazebor, save as world/house1.world
 ![house-world][house-world-img]
-my personal world consist of stairs and table and standing person.  surrounding with wall and window. 
-This world is created in the building editor of gazebor, save as world/house1.world
 
 
-2-wheel robot is from previous lesson(udacity_bot) , with a hokuyo scan and replace camera with kinect(RGBD camera)
+### 2-wheel robot is from previous lesson(udacity_bot) , with a hokuyo scan and replace camera with kinect(RGBD camera),package inherit a lot from  udacity_bot, adopting scripts from Student+Project+Materials.zip, adding some new launch file
 
-package inherit a lot from  udacity_bot, adopting scripts from Student+Project+Materials.zip, adding some new launch file
+slam_rtab.sh  integrating all these launch file, afford to start the mapping environment
 
-tf tree is here
+whole setup tf tree is here, also see the docs/frames.pdf
 ![tf-tree][tf-tree-img]
 
-slam_rtab.sh  integrate all these launch file, afford to start the mapping environment
 
 
 
-but I got error
+
+#### trouble shooting
+
+but I got error initialy
 
 [ WARN]  Could not get transform from robot_footprint to camera_rgbd_frame after 0.200000 seconds (for stamp=20.723000)
 Error="canTransform: source_frame camera_rgbd_frame does not exist
@@ -49,63 +56,55 @@ Error="canTransform: source_frame camera_rgbd_frame does not exist
 from [tips](https://answers.ros.org/question/232534/gazebo-camera-frame-is-inconsistent-with-rviz-opencv-convention/)
 solution: in udacity_bot.xacro ,add  <joint>  of camera_rgbd_joint, attach link of  camera_rgbd_frame to it
 
-# Results, 
-images for mapping process, final map (2D/3D) for both Gazebo worlds.
-occupancy grid and 3D map. 
+## Results
+ 
 
-## kitchen world
+### kitchen world
 
-map process
+map process, 156 loop closure
 ![kitchen-process][kitchen-process-img]
-
+![kitchen-viewer][kitchen-viewer-img]
 2d map
 ![kitchen-2d][kitchen-2d-img]
 
 3d map
 ![kitchen-3d][kitchen-3d-img]
 
-## my world
+### my world
 
 2d map
-![house-2d][]
+![house-2d][house-2d-img]
 
 3d map
-![house-3d][]
+![house-3d][house-3d-img]
 
-map process
+map process, 10 loop closure
 ![house-process][house-process-img]
+![house-viewer][house-viewer-img]
 
-#  Discussion - performance, wrong
- The student explains how the procedure went and methodologies to improve it. 
+##  Discussion  
 
-teleop to turn 3 rounds?  rtabmapviz to monitoring...
-rqt_image_view to tracking
+Sometime in the teleop of robot, robot resist to go,  very slow, maybe the computation increase(now configuration is visual words per image (bag-of-words) 400, SURF features  100), here need to further investigate
 
- feature-rich enough to make global loop closure
-
-## The student should compare and contrast the performance of RTAB Mapping in different worlds.
-
-* visual words per image (bag-of-words) 400, SURF features  100
-* [ WARN] (2018-07-23 19:42:11.404) Rtabmap.cpp:1913::process() Rejected loop closure 59 -> 1215: Not enough features in images (old=7, new=288, min=15)
-By providing constraints associated with how many nodes are processed for loop closure by memory management, the time complexity becomes constant in RTAB-Map.
-Graph-SLAM complexity is linear, according to the number of nodes, which increases according to the size of the map.
-
-# Future Work. 
+In the mapping process try to use rtabmapviz to monitoring, and use the rtab-databaseviewer to analyze afterwards
+the provided world is  feature-rich enough to get relative perfect result, but my customized world has less feature, so some loop closure is false(need to reject in  constraint view) , and the stair is drift and distorted
 
 
 
+## Future Work. 
+
+
+I would like do further mapping with a drone model by rtab-ROS, where the 3D point cloud will be more meaningful for the navigation of drone. 
 
 
 [tf-tree-img]: ./docs/rosgraph.png
 [kitchen-2d-img]: ./docs/kitchen/2d.jpg
 [kitchen-3d-img]: ./docs/kitchen/3d.png
 [kitchen-process-img]: ./docs/kitchen/in-process.png
+[kitchen-viewer-img]: ./docs/kitchen/in-viewer.png
+
 [house-2d-img]: ./docs/house/2d.png
 [house-3d-img]: ./docs/house/3d.png
 [house-process-img]: ./docs/house/process.png
 [house-world-img]: ./docs/house/world.png
-
-Mapping Best Practices
-
-Our goal is to create a great map with the least amount of passes as possible. Getting 3 loop closures will be sufficient for mapping the entire environment. You can maximize your loop closures by going over similar paths two or three times. This allows for the maximization of feature detection, facilitating faster loop closures! When you are done mapping, be sure to copy or move your database before moving on to map a new environment. Remember, relaunching the mapping node deletes any database in place on launch start up!
-
+[house-viewer-img]: ./docs/house/viewer.png
