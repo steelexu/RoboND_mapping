@@ -2,7 +2,7 @@
 # Map My World
 
 ## Abstract
-
+SLAM is computational problem of constructing or updating a map of an unknown environment.SLAM algorithms need to be tailored to specified environment. We will discuss such engineering consideration in following work.
 This project complete the mapping task with provided environment and customized world, work including: setup the world, equip the robot, and debugging with ros tool.  Utilizing  with rtab-slam toolchain, environment's 2d   occupancy grid map and 3D point cloud are generated
 
 ## Introduction 
@@ -43,12 +43,13 @@ Aside from the provided  world,  my personal world consist of stairs and table a
 
 slam_rtab.sh  integrating all these launch file, afford to start the mapping environment
 
-whole setup tf tree is here, also see the docs/frames.pdf
+whole setup tf tree is here, 
 ![tf-tree][tf-tree-img]
 
 
+also see the docs/frames.pdf, by "rosrun tf view_frames"
 
-
+![slam-frame][frame-img]
 
 #### trouble shooting
 
@@ -100,6 +101,8 @@ the provided world is  feature-rich enough to get relative perfect result, but m
 
 I would like do further mapping with a drone model by rtab-ROS, where the 3D point cloud will be more meaningful for the navigation of drone. 
 
+SLAM can be used for indoor scenario such as warehouse , also required by domestic applicaiton or business service. 
+In driverless car, highly detailed map need to be made in advance, by help of visual slam, this will be accelerated.
 
 [tf-tree-img]: ./docs/rosgraph.png
 [kitchen-2d-img]: ./docs/kitchen/2d.jpg
@@ -112,3 +115,6 @@ I would like do further mapping with a drone model by rtab-ROS, where the 3D poi
 [house-process-img]: ./docs/house/process.png
 [house-world-img]: ./docs/house/world.png
 [house-viewer-img]: ./docs/house/viewer.png
+
+
+[frame-img]: ./docs/slam-frame-0.png
